@@ -78,38 +78,33 @@
 {
     isInitialState = YES;
     isValidState   = NO;
-    
-    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, 290, 46);
+
     self.backgroundColor = [UIColor clearColor];
-    
-    UIImageView *backgroundImageView = [[UIImageView alloc] initWithFrame:self.bounds];
-    backgroundImageView.image = [[UIImage imageNamed:@"textfield"]
-                                 resizableImageWithCapInsets:UIEdgeInsetsMake(0, 8, 0, 8)];
-    [self addSubview:backgroundImageView];
-    
+    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, 290, 46);
+
     self.innerView = [[UIView alloc] initWithFrame:CGRectMake(40, 12, self.frame.size.width - 40, 20)];
     self.innerView.clipsToBounds = YES;
-    
+
     [self setupPlaceholderView];
     [self setupCardNumberField];
     [self setupCardExpiryField];
     [self setupCardCVCField];
-    
+
     [self.innerView addSubview:cardNumberField];
-    
+
     UIImageView *gradientImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 12, 34)];
     gradientImageView.image = [UIImage imageNamed:@"gradient"];
     [self.innerView addSubview:gradientImageView];
-    
+
     opaqueOverGradientView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 9, 34)];
     opaqueOverGradientView.backgroundColor = [UIColor colorWithRed:0.9686 green:0.9686
                                                               blue:0.9686 alpha:1.0000];
     opaqueOverGradientView.alpha = 0.0;
     [self.innerView addSubview:opaqueOverGradientView];
-    
+
     [self addSubview:self.innerView];
     [self addSubview:placeholderView];
-    
+
     [self stateCardNumber];
 }
 
@@ -119,7 +114,7 @@
     placeholderView = [[UIImageView alloc] initWithFrame:CGRectMake(12, 13, 32, 20)];
     placeholderView.backgroundColor = [UIColor clearColor];
     placeholderView.image = [UIImage imageNamed:@"placeholder"];
-    
+
     CALayer *clip = [CALayer layer];
     clip.frame = CGRectMake(32, 0, 4, 20);
     clip.backgroundColor = [UIColor clearColor].CGColor;
@@ -129,14 +124,14 @@
 - (void)setupCardNumberField
 {
     cardNumberField = [[PKTextField alloc] initWithFrame:CGRectMake(12,0,170,20)];
-    
+
     cardNumberField.delegate = self;
-    
+
     cardNumberField.placeholder = @"1234 5678 9012 3456";
     cardNumberField.keyboardType = UIKeyboardTypeNumberPad;
     cardNumberField.textColor = DarkGreyColor;
     cardNumberField.font = DefaultBoldFont;
-    
+
     [cardNumberField.layer setMasksToBounds:YES];
 }
 
@@ -146,12 +141,12 @@
                                                                     60,20)];
 
     cardExpiryField.delegate = self;
-    
+
     cardExpiryField.placeholder = @"MM/YY";
     cardExpiryField.keyboardType = UIKeyboardTypeNumberPad;
     cardExpiryField.textColor = DarkGreyColor;
     cardExpiryField.font = DefaultBoldFont;
-    
+
     [cardExpiryField.layer setMasksToBounds:YES];
 }
 
@@ -159,14 +154,14 @@
 {
     cardCVCField = [[PKTextField alloc] initWithFrame:CGRectMake(kPKViewCardCVCFieldStartX,0,
                                                                  55,20)];
-    
+
     cardCVCField.delegate = self;
-    
+
     cardCVCField.placeholder = @"CVC";
     cardCVCField.keyboardType = UIKeyboardTypeNumberPad;
     cardCVCField.textColor = DarkGreyColor;
     cardCVCField.font = DefaultBoldFont;
-    
+
     [cardCVCField.layer setMasksToBounds:YES];
 }
 
@@ -194,7 +189,7 @@
     if (!isInitialState) {
         // Animate left
         isInitialState = YES;
-        
+
         [UIView animateWithDuration:0.05 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut
                          animations:^{
                              opaqueOverGradientView.alpha = 0.0;
@@ -221,18 +216,18 @@
                              [cardCVCField removeFromSuperview];
                          }];
     }
-    
+
     [self.cardNumberField becomeFirstResponder];
 }
 
 - (void)stateMeta
 {
     isInitialState = NO;
-    
+
     CGSize cardNumberSize = [self.cardNumber.formattedString sizeWithFont:DefaultBoldFont];
     CGSize lastGroupSize = [self.cardNumber.lastGroup sizeWithFont:DefaultBoldFont];
     CGFloat frameX = self.cardNumberField.frame.origin.x - (cardNumberSize.width - lastGroupSize.width);
-    
+
     [UIView animateWithDuration:0.05 delay:0.35 options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{
                          opaqueOverGradientView.alpha = 1.0;
@@ -251,7 +246,7 @@
                                            cardNumberField.frame.size.width,
                                            cardNumberField.frame.size.height);
     } completion:nil];
-    
+
     [self addSubview:placeholderView];
     [self.innerView addSubview:cardExpiryField];
     [self.innerView addSubview:cardCVCField];
@@ -264,7 +259,7 @@
 }
 
 - (BOOL)isValid
-{    
+{
     return [self.cardNumber isValid] && [self.cardExpiry isValid] &&
            [self.cardCVC isValid];
 }
@@ -276,7 +271,7 @@
     card.cvc        = [self.cardCVC string];
     card.expMonth   = [self.cardExpiry month];
     card.expYear    = [self.cardExpiry year];
-    
+
     return card;
 }
 
@@ -294,7 +289,7 @@
              [previousPlaceholderView removeFromSuperview];
          }];
         placeholderView = nil;
-        
+
         [self setupPlaceholderView];
         placeholderView.image = image;
         placeholderView.layer.opacity = 0.0;
@@ -314,7 +309,7 @@
 {
     PKCardNumber *cardNumber = [PKCardNumber cardNumberWithString:cardNumberField.text];
     PKCardType cardType      = [cardNumber cardType];
-    
+
     if (cardType == PKCardTypeAmex) {
         [self setPlaceholderViewImage:[UIImage imageNamed:@"cvc-amex"]];
     } else {
@@ -327,7 +322,7 @@
     PKCardNumber *cardNumber = [PKCardNumber cardNumberWithString:cardNumberField.text];
     PKCardType cardType      = [cardNumber cardType];
     NSString* cardTypeName   = @"placeholder";
-    
+
     switch (cardType) {
         case PKCardTypeAmex:
             cardTypeName = @"amex";
@@ -363,7 +358,7 @@
     } else {
         [self setPlaceholderToCardType];
     }
-    
+
     if ([textField isEqual:cardNumberField] && !isInitialState) {
         [self stateCardNumber];
     }
@@ -374,15 +369,15 @@
     if ([textField isEqual:cardNumberField]) {
         return [self cardNumberFieldShouldChangeCharactersInRange:range replacementString:replacementString];
     }
-    
+
     if ([textField isEqual:cardExpiryField]) {
         return [self cardExpiryShouldChangeCharactersInRange:range replacementString:replacementString];
     }
-    
+
     if ([textField isEqual:cardCVCField]) {
         return [self cardCVCShouldChangeCharactersInRange:range replacementString:replacementString];
     }
-    
+
     return YES;
 }
 
@@ -399,29 +394,29 @@
     NSString *resultString = [cardNumberField.text stringByReplacingCharactersInRange:range withString:replacementString];
     resultString = [PKTextField textByRemovingUselessSpacesFromString:resultString];
     PKCardNumber *cardNumber = [PKCardNumber cardNumberWithString:resultString];
-    
+
     if ( ![cardNumber isPartiallyValid] )
         return NO;
-    
+
     if (replacementString.length > 0) {
         cardNumberField.text = [cardNumber formattedStringWithTrail];
     } else {
         cardNumberField.text = [cardNumber formattedString];
     }
-    
+
     [self setPlaceholderToCardType];
-    
+
     if ([cardNumber isValid]) {
         [self textFieldIsValid:cardNumberField];
         [self stateMeta];
-        
+
     } else if ([cardNumber isValidLength] && ![cardNumber isValidLuhn]) {
         [self textFieldIsInvalid:cardNumberField withErrors:YES];
-        
+
     } else if (![cardNumber isValidLength]) {
         [self textFieldIsInvalid:cardNumberField withErrors:NO];
     }
-    
+
     return NO;
 }
 
@@ -430,28 +425,28 @@
     NSString *resultString = [cardExpiryField.text stringByReplacingCharactersInRange:range withString:replacementString];
     resultString = [PKTextField textByRemovingUselessSpacesFromString:resultString];
     PKCardExpiry *cardExpiry = [PKCardExpiry cardExpiryWithString:resultString];
-    
+
     if (![cardExpiry isPartiallyValid]) return NO;
-    
+
     // Only support shorthand year
     if ([cardExpiry formattedString].length > 5) return NO;
-    
+
     if (replacementString.length > 0) {
         cardExpiryField.text = [cardExpiry formattedStringWithTrail];
     } else {
         cardExpiryField.text = [cardExpiry formattedString];
     }
-    
+
     if ([cardExpiry isValid]) {
         [self textFieldIsValid:cardExpiryField];
         [self stateCardCVC];
-        
+
     } else if ([cardExpiry isValidLength] && ![cardExpiry isValidDate]) {
         [self textFieldIsInvalid:cardExpiryField withErrors:YES];
     } else if (![cardExpiry isValidLength]) {
         [self textFieldIsInvalid:cardExpiryField withErrors:NO];
     }
-    
+
     return NO;
 }
 
@@ -461,19 +456,19 @@
     resultString = [PKTextField textByRemovingUselessSpacesFromString:resultString];
     PKCardCVC *cardCVC = [PKCardCVC cardCVCWithString:resultString];
     PKCardType cardType = [[PKCardNumber cardNumberWithString:cardNumberField.text] cardType];
-    
+
     // Restrict length
     if ( ![cardCVC isPartiallyValidWithType:cardType] ) return NO;
-    
+
     // Strip non-digits
     cardCVCField.text = [cardCVC string];
-    
+
     if ([cardCVC isValidWithType:cardType]) {
         [self textFieldIsValid:cardCVCField];
     } else {
         [self textFieldIsInvalid:cardCVCField withErrors:NO];
     }
-    
+
     return NO;
 }
 
@@ -487,10 +482,10 @@
         if ([self.delegate respondsToSelector:@selector(paymentView:withCard:isValid:)]) {
             [self.delegate paymentView:self withCard:self.card isValid:YES];
         }
-        
+
     } else if (![self isValid] && isValidState) {
         isValidState = NO;
-        
+
         if ([self.delegate respondsToSelector:@selector(paymentView:withCard:isValid:)]) {
             [self.delegate paymentView:self withCard:self.card isValid:NO];
         }
@@ -506,7 +501,7 @@
     if (errors) {
         textField.textColor = RedColor;
     } else {
-        textField.textColor = DarkGreyColor;        
+        textField.textColor = DarkGreyColor;
     }
 
     [self checkValid];
