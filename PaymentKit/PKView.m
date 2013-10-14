@@ -78,9 +78,10 @@
 {
     isInitialState = YES;
     isValidState   = NO;
-
-    self.backgroundColor = [UIColor clearColor];
+    
     self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, 290, 46);
+    self.backgroundColor = [UIColor clearColor];
+    
 
     self.innerView = [[UIView alloc] initWithFrame:CGRectMake(40, 12, self.frame.size.width - 40, 20)];
     self.innerView.clipsToBounds = YES;
@@ -215,15 +216,14 @@
                              [cardExpiryField removeFromSuperview];
                              [cardCVCField removeFromSuperview];
                          }];
+        [self.cardNumberField becomeFirstResponder];
     }
-
-    [self.cardNumberField becomeFirstResponder];
 }
 
 - (void)stateMeta
 {
     isInitialState = NO;
-
+    
     CGSize cardNumberSize = [self.cardNumber.formattedString sizeWithFont:DefaultBoldFont];
     CGSize lastGroupSize = [self.cardNumber.lastGroup sizeWithFont:DefaultBoldFont];
     CGFloat frameX = self.cardNumberField.frame.origin.x - (cardNumberSize.width - lastGroupSize.width);
@@ -246,7 +246,7 @@
                                            cardNumberField.frame.size.width,
                                            cardNumberField.frame.size.height);
     } completion:nil];
-
+    
     [self addSubview:placeholderView];
     [self.innerView addSubview:cardExpiryField];
     [self.innerView addSubview:cardCVCField];
@@ -256,6 +256,30 @@
 - (void)stateCardCVC
 {
     [cardCVCField becomeFirstResponder];
+}
+
+// Proxy UIResponder methods
+
+- (BOOL)becomeFirstResponder
+{
+    if (isInitialState) {
+        return [cardNumberField becomeFirstResponder];
+    } else if ([self.cardExpiry isValid]) {
+        return [cardCVCField becomeFirstResponder];
+    } else {
+        return [cardExpiryField becomeFirstResponder];
+    }
+}
+
+- (BOOL)resignFirstResponder
+{
+    if ([cardNumberField isFirstResponder]) {
+        return [cardNumberField resignFirstResponder];
+    } else if ([cardCVCField isFirstResponder]) {
+        return [cardCVCField resignFirstResponder];
+    } else {
+        return [cardExpiryField resignFirstResponder];
+    }
 }
 
 - (BOOL)isValid
